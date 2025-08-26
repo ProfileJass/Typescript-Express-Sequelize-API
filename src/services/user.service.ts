@@ -15,8 +15,8 @@ class UserService {
     create(user: UserRequest): User {
         const userCreate: User = {
             id: Date.now(),
-            name: "Jhonatan",
-            lastName: "Sierra",
+            name: "Usuario",
+            lastName: "Número 1",
             password: "123",
         };
         return userRepository.create(userCreate);
