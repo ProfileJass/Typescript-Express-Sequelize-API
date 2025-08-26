@@ -1,22 +1,6 @@
-import 'reflect-metadata';
-import express from 'express';
-import productRouter from './routers/ProductRouter';
-import sequelize from './database/Sequelize';
-import { swaggerUi, specs } from './config/Swagger';
+import { app } from "node/lib/request";
 
-const app = express();
-app.use(express.json());
-
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-
-app.use('/products', productRouter);
-
-sequelize.sync().then(() => {
-    console.log('Base de datos sincronizada');
-    app.listen(3500, () => {
-        console.log('Server running on port 3500');
-        console.log('Swagger docs available at http://localhost:3500/api-docs');
-    });
-}).catch((error) => {
-    console.error('Error al sincronizar la base de datos:', error);
+const port = 8001;
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
 });
