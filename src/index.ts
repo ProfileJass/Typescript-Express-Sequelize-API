@@ -1,4 +1,4 @@
-import { app } from "node/lib/request";
+import app from './app';
 
 const port = 8001;
 app.listen(port, () => {

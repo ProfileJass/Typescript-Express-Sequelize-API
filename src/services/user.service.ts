@@ -4,8 +4,8 @@ import { userRepository } from "../repositories/user.repository";
 
 class UserService {
 
-    find(): User[] {
-        return userRepository.find();
+    findAll(): User[] {
+        return userRepository.findAll();
     }
 
     findById(id: number): User | null {
@@ -14,23 +14,23 @@ class UserService {
 
     create(user: UserRequest): User {
         const userCreate: User = {
-            id: Date.now(),
-            name: "Usuario",
-            lastName: "Número 1",
-            password: "123",
+            id: user.id,
+            name: user.name,
+            lastName: user.lastName,
+            password: user.password,
         };
         return userRepository.create(userCreate);
     }
 
     validateUser(name: string, password: string): User | null {
-        const users: User[] = this.find();
+        const users: User[] = this.findAll();
         return users.find(user => user.name === name && user.password === password) || null;
     }
 
     deleteUserById(id: number): boolean {
         const user = this.findById(id);
         if (user) {
-            userRepository.delete(id);
+            userRepository.delete(userRepository.getUserIndex(id));
             return true;
         }
         return false;
