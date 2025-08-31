@@ -5,4 +5,12 @@ const router = Router();
 
 router.get('/', UserController.getAllUsers);
 
+router.get('/:id', UserController.getUserById);
+
+router.post('/', UserController.createUser);
+
+router.post('/', UserController.validateUser);
+
+router.delete('/', UserController.deleteUser);
+
 export default router;

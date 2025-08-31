@@ -21,6 +21,20 @@ class UserService {
         };
         return userRepository.create(userCreate);
     }
+
+    validateUser(name: string, password: string): User | null {
+        const users: User[] = this.find();
+        return users.find(user => user.name === name && user.password === password) || null;
+    }
+
+    deleteUserById(id: number): boolean {
+        const user = this.findById(id);
+        if (user) {
+            userRepository.delete(id);
+            return true;
+        }
+        return false;
+    }
 }
 
 export const userService = new UserService();
