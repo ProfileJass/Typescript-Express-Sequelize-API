@@ -2,6 +2,7 @@ import User from "../models/user.model";
 import { Request, Response } from "express";
 import { userService } from "../services/user.service";
 import { UserRequest } from "../dtos/user.request";
+import { ApplicationError } from "../utils/user.error";
 
 export class UserController {
   static getAllUsers(req: Request, res: Response) {
@@ -10,39 +11,54 @@ export class UserController {
   }
 
   static getUserById(req: Request, res: Response) {
-    const id = parseInt(req.params.id);
-    const user: User | null = userService.findById(id);
-    if (user) {
-      res.json(user);
-    } else {
-      res.status(404).json({ message: "User not found" });
+    try {
+      const id = Number(req.params.id);
+      const user = userService.findById(id);
+      res.status(200).json(user);
+    } catch (error) {
+      if (error instanceof ApplicationError) {
+        return res.status(error.statusCode).json({ message: error.message });
+      }
+      res.status(500).json({ message: "Ha ocurrido un error inesperado." });
     }
   }
 
   static createUser(req: Request, res: Response) {
-    const user: UserRequest = req.body;
-    const newUser: User = userService.create(user);
-    res.status(201).json(newUser);
-  }
-
-  static validateUser(req: Request, res: Response){
-    const user: UserRequest = req.body;
-    const isValid = userService.validateUser(user.name, user.password);
-    if (isValid) {
-      res.status(200).json({ message: "User is valid" });
-    } else {
-      res.status(400).json({ message: "User is invalid" });
+    try {
+      const { id, name, lastName, password } = req.body as UserRequest;
+      const newUser: User = userService.create({ id, name, lastName, password });
+      res.status(201).json(newUser);
+    } catch (error) {
+      if (error instanceof ApplicationError) {
+        return res.status(error.statusCode).json({ message: error.message });
+      }
+      res.status(500).json({ message: "Ha ocurrido un error inesperado." });
     }
   }
 
-  static deleteUser(req: Request, res: Response){
-    const id = parseInt(req.params.id);
-    const deleted = userService.deleteUserById(id);
-    if (deleted) {
+  static validateUser(req: Request, res: Response) {
+    try {
+      const { name, password } = req.body;
+      const user = userService.validateUser(name, password);
+      res.status(200).json(user);
+    } catch (error) {
+      if (error instanceof ApplicationError) {
+        return res.status(error.statusCode).json({ message: error.message });
+      }
+      res.status(500).json({ message: "Ha ocurrido un error inesperado." });
+    }
+  }
+
+  static deleteUser(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      userService.deleteUserById(id);
       res.status(204).send();
-    } else {
-      res.status(404).json({ message: "User not found" });
+    } catch (error) {
+      if (error instanceof ApplicationError) {
+        return res.status(error.statusCode).json({ message: error.message });
+      }
+      res.status(500).json({ message: "Ha ocurrido un error inesperado." });
     }
   }
-
 }
