@@ -1,0 +1,1 @@
+{"version":3,"file":"CreateProductRequestDTO.js","sourceRoot":"","sources":["../../src/dtos/CreateProductRequestDTO.ts"],"names":[],"mappings":";;AAAA,MAAM,uBAAuB;IACzB,YACW,IAAY,EACZ,KAAa,EACb,QAAgB;QAFhB,SAAI,GAAJ,IAAI,CAAQ;QACZ,UAAK,GAAL,KAAK,CAAQ;QACb,aAAQ,GAAR,QAAQ,CAAQ;IACxB,CAAC;CACP;AAED,kBAAe,uBAAuB,CAAC"}
