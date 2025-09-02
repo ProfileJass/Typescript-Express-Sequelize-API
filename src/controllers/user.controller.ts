@@ -25,8 +25,8 @@ export class UserController {
 
   static createUser(req: Request, res: Response) {
     try {
-      const { id, name, lastName, password } = req.body as UserRequest;
-      const newUser: User = userService.create({ id, name, lastName, password });
+      const { name, lastName, password } = req.body as UserRequest;
+      const newUser: User = userService.create({ name, lastName, password });
       res.status(201).json(newUser);
     } catch (error) {
       if (error instanceof ApplicationError) {

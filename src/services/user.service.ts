@@ -25,14 +25,11 @@ class UserService {
 
   create(user: UserRequest): User {
     const userCreate: User = {
-      id: user.id,
+      id: Date.now(),
       name: user.name,
       lastName: user.lastName,
       password: user.password,
     };
-    if (userRepository.getUserIndex(userCreate.id) !== -1) {
-      throw new BadRequestError("El usuario ya existe.");
-    }
     if (!userCreate.name || !userCreate.password || !userCreate.lastName) {
       throw new BadRequestError(
         "Nombre, apellido y contraseña son requeridos."
