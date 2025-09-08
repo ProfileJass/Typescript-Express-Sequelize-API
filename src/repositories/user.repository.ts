@@ -1,27 +1,38 @@
 import User from "../models/user.model";
 
 export class UserRepository {
-  private users: User[] = [];
-
-  findAll(): User[] {
-    return this.users;
+  async findAll(): Promise<User[]> {
+    return await User.findAll();
   }
 
-  findById(id: number): User | null {
-    return this.users.find((user) => user.id === id) || null;
+  async findById(id: number): Promise<User | null> {
+    return await User.findByPk(id);
   }
 
-  create(user: User): User {
-    this.users.push(user);
-    return user;
+  async create(userData: Partial<User>): Promise<User> {
+    return await User.create(userData);
   }
 
-  delete(userIndex: number) {
-    this.users.splice(userIndex, 1);
+  async update(id: number, userData: Partial<User>): Promise<User | null> {
+    const user = await User.findByPk(id);
+    if (user) {
+      await user.update(userData);
+      return user;
+    }
+    return null;
   }
 
-  getUserIndex(id: number): number {
-    return this.users.findIndex((user) => user.id === id);
+  async delete(id: number): Promise<boolean> {
+    const deletedRows = await User.destroy({
+      where: { id }
+    });
+    return deletedRows > 0;
+  }
+
+  async findByName(name: string): Promise<User[]> {
+    return await User.findAll({
+      where: { name }
+    });
   }
 }
 

@@ -8,56 +8,64 @@ import {
 } from "../utils/user.error";
 
 class UserService {
-  findAll(): User[] {
-    return userRepository.findAll();
+  async findAll(): Promise<User[]> {
+    return await userRepository.findAll();
   }
 
-  findById(id: number): User {
+  async findById(id: number): Promise<User> {
     if (isNaN(id)) {
       throw new BadRequestError("Formato de ID inválido.");
     }
-    const user = userRepository.findById(id);
+    const user = await userRepository.findById(id);
     if (!user) {
       throw new NotFoundError("Usuario no encontrado.");
     }
     return user;
   }
 
-  create(user: UserRequest): User {
-    const userCreate: User = {
-      id: Date.now(),
-      name: user.name,
-      lastName: user.lastName,
-      password: user.password,
-    };
-    if (!userCreate.name || !userCreate.password || !userCreate.lastName) {
+  async create(userRequest: UserRequest): Promise<User> {
+    if (!userRequest.name || !userRequest.password || !userRequest.lastName) {
       throw new BadRequestError(
         "Nombre, apellido y contraseña son requeridos."
       );
     }
-    return userRepository.create(userCreate);
+    
+    return await userRepository.create({
+      name: userRequest.name,
+      lastName: userRequest.lastName,
+      password: userRequest.password,
+    });
   }
 
-  validateUser(name: string, password: string): User | null {
+  async validateUser(name: string, password: string): Promise<User | null> {
     if (!name || !password) {
       throw new BadRequestError("Nombre y contraseña son requeridos.");
     }
-    const user = userRepository
-      .findAll()
-      .find((user) => user.name === name && user.password === password);
+    
+    const users = await userRepository.findByName(name);
+    const user = users.find(user => user.password === password);
+    
     if (!user) {
       throw new NotFoundError("Usuario no encontrado.");
     }
     return user;
   }
 
-  deleteUserById(id: number): boolean {
-    const user = this.findById(id);
+  async deleteUserById(id: number): Promise<boolean> {
+    const user = await this.findById(id);
     if (!user) {
       throw new NotFoundError("Usuario no encontrado.");
     }
-    userRepository.delete(userRepository.getUserIndex(id));
-    return true;
+    
+    return await userRepository.delete(id);
+  }
+
+  async updateUser(id: number, userRequest: Partial<UserRequest>): Promise<User> {
+    const user = await userRepository.update(id, userRequest);
+    if (!user) {
+      throw new NotFoundError("Usuario no encontrado.");
+    }
+    return user;
   }
 }
 
