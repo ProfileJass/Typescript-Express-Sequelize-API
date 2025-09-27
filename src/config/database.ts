@@ -1,7 +1,9 @@
 import { Sequelize } from 'sequelize-typescript';
-import { User } from '../models/user.model';
-import { Product } from '../products/domain/model/product.model';
-import { Category } from '../products/domain/model/category.model';
+import { User } from '../microservices/users/domain/user.model';
+import { Product } from '../microservices/products/domain/model/product.model';
+import { Category } from '../microservices/products/domain/model/category.model';
+import { Order } from '../microservices/orders/domain/model/order.model';
+import { OrderDetail } from '../microservices/orders/domain/model/order-detail.model';
 import { seedCategories } from '../seeders/category.seeder';
 
 export const sequelize = new Sequelize('tienda', 'usuario', 'usuario123', {
@@ -19,7 +21,7 @@ export const sequelize = new Sequelize('tienda', 'usuario', 'usuario123', {
   },
 });
 
-sequelize.addModels([User, Product, Category]);
+sequelize.addModels([User, Product, Category, Order, OrderDetail]);
 
 export const connectDB = async (): Promise<void> => {
   try {

@@ -1,4 +1,4 @@
-import { Category } from "../products/domain/model/category.model";
+import { Category } from "../microservices/products/domain/model/category.model";
 
 export const seedCategories = async (): Promise<void> => {
   try {

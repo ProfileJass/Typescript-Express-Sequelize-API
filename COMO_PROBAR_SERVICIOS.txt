@@ -1,0 +1,230 @@
+# MICROSERVICIOS TIENDA - DOCUMENTACIÓN
+
+## Estructura de Microservicios
+
+### 1. USERS (Usuarios)
+- **Ubicación**: `src/microservices/users/`
+- **Modelo**: Usuario con id, nombre, apellido, contraseña
+- **Endpoints**:
+  - GET `/users/getAll/` - Obtener todos los usuarios
+  - GET `/users/getById/:id` - Obtener usuario por ID
+  - POST `/users/createUser/` - Crear usuario
+  - POST `/users/validateUser/` - Validar usuario
+  - DELETE `/users/deleteUser/:id` - Eliminar usuario
+
+### 2. PRODUCTS (Productos)
+- **Ubicación**: `src/microservices/products/`
+- **Modelos**: Producto (id, nombre, precio, cantidad, estado, categoryId), Categoría (id, nombre, descripción)
+- **Endpoints**:
+  - GET `/products/` - Obtener todos los productos
+  - GET `/products/:id` - Obtener producto por ID
+  - POST `/products/` - Crear producto
+  - PUT `/products/:id` - Actualizar producto
+  - DELETE `/products/:id` - Eliminar producto
+
+### 3. ORDERS (Pedidos)
+- **Ubicación**: `src/microservices/orders/`
+- **Modelos**: 
+  - Pedido (id, id_usuario, total, fecha)
+  - Detalle Pedido (id, id_pedido, id_producto, cantidad, precio)
+- **Endpoints**:
+  - POST `/orders/` - Realizar un pedido
+  - GET `/orders/getOrderById/:id` - Traer un pedido por ID
+  - GET `/orders/getOrder` - Traer todos los pedidos por usuario
+  - GET `/orders/getDetailOrderById/:id` - Traer el detalle de los pedidos
+  - DELETE `/orders/deleteOrder/:id` - Eliminar un pedido
+
+## Base de Datos
+
+### Modelo Relacional Implementado:
+```
+Usuarios (users)
+- id (PK)
+- nombre
+- apellido
+- contraseña
+
+Productos (products)
+- id (PK)
+- nombre
+- precio
+- cantidad
+- estado
+- id_categoria (FK)
+
+Categorías (categories)
+- id (PK)
+- nombre
+- descripción
+
+Pedidos (pedidos)
+- id (PK)
+- id_usuario (FK)
+- total
+- fecha
+
+Detalle Pedidos (detalle_pedidos)
+- id (PK)
+- id_pedido (FK)
+- id_producto (FK)
+- cantidad
+- precio
+```
+
+## Cómo Probar los Servicios
+
+### Prerrequisitos:
+1. Node.js y npm instalados
+2. Docker y Docker Compose instalados (opcional para base de datos)
+
+### Opción 1: Usando Docker Compose (Recomendado)
+```bash
+# Levantar la base de datos con Docker
+cd db
+docker-compose up -d
+
+# Instalar dependencias y ejecutar
+cd ..
+npm install
+npm start
+```
+
+### Opción 2: Base de datos local
+1. Base de datos MySQL ejecutándose en localhost:3306
+2. Usuario: `usuario`, Contraseña: `usuario123`, Base de datos: `tienda`
+
+```bash
+npm install
+npm start
+```
+
+### Verificar que los servicios estén funcionando:
+- La aplicación se ejecutará en: `http://localhost:3000`
+- Los endpoints estarán disponibles según la documentación siguiente
+
+### Ejemplos de Requests:
+
+#### 1. Crear Usuario
+```json
+POST http://localhost:3000/users/createUser/
+{
+  "name": "Juan",
+  "lastName": "Pérez",
+  "password": "123456"
+}
+```
+
+#### 2. Crear Producto
+```json
+POST http://localhost:3000/products/
+{
+  "name": "Laptop HP",
+  "price": 999.99,
+  "quantity": 10,
+  "status": "active",
+  "categoryId": 1
+}
+```
+
+#### 3. Realizar Pedido
+```json
+POST http://localhost:3000/orders/
+{
+  "userId": 1,
+  "total": 1999.98,
+  "orderDetails": [
+    {
+      "productId": 1,
+      "quantity": 2,
+      "price": 999.99
+    }
+  ]
+}
+```
+
+#### 4. Obtener Pedido por ID
+```
+GET http://localhost:3000/orders/getOrderById/1
+```
+
+#### 5. Obtener Todos los Pedidos
+```
+GET http://localhost:3000/orders/getOrder
+```
+
+#### 6. Obtener Detalle de Pedido por ID
+```
+GET http://localhost:3000/orders/getDetailOrderById/1
+```
+
+## Arquitectura Hexagonal
+
+Cada microservicio sigue la arquitectura hexagonal:
+
+### Estructura:
+```
+microservices/
+├── users/
+│   ├── domain/
+│   │   └── user.model.ts
+│   ├── application/
+│   │   └── user.service.ts
+│   └── infrastructure/
+│       ├── user.controller.ts
+│       ├── user.repository.ts
+│       └── user.router.ts
+├── products/
+│   ├── domain/
+│   │   ├── model/
+│   │   │   ├── product.model.ts
+│   │   │   └── category.model.ts
+│   │   └── ports/
+│   │       └── product.repository.interface.ts
+│   ├── application/
+│   │   ├── product.service.ts
+│   │   └── dto/
+│   │       └── product.request.ts
+│   └── infrastructure/
+│       ├── controllers/
+│       │   └── product.controller.ts
+│       ├── repositories/
+│       │   └── product.repository.ts
+│       └── routers/
+│           └── product.router.ts
+└── orders/
+    ├── domain/
+    │   ├── model/
+    │   │   ├── order.model.ts
+    │   │   └── order-detail.model.ts
+    │   └── ports/
+    │       ├── order.repository.interface.ts
+    │       └── order-detail.repository.interface.ts
+    ├── application/
+    │   ├── order.service.ts
+    │   └── dto/
+    │       ├── order.request.ts
+    │       └── order-detail.request.ts
+    └── infrastructure/
+        ├── controllers/
+        │   └── order.controller.ts
+        ├── repositories/
+        │   ├── order.repository.ts
+        │   └── order-detail.repository.ts
+        └── routers/
+            └── order.router.ts
+```
+
+## Control de Errores
+
+- Validación de datos de entrada
+- Manejo de errores de base de datos
+- Respuestas HTTP apropiadas
+- Logging de errores
+
+## Integrantes del Proyecto
+
+[Incluir nombres de los integrantes del equipo aquí]
+
+## Fecha de Entrega
+
+Máximo el día SÁBADO a las 12:00 pm
