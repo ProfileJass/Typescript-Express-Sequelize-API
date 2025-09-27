@@ -3,84 +3,165 @@ import { Request, Response } from "express";
 import { userService } from "../application/user.service";
 import { UserRequest } from "../application/dto/user.request";
 import { ApplicationError } from "../application/utils/user.error";
+import ResponseHandler from "../../../shared/utils/response-handler.util";
+import Validator from "../../../shared/utils/validator.util";
+import { asyncHandler } from "../../../shared/middleware/error-handler.middleware";
+import { UserResponse } from "../../../shared/interfaces/api-response.interface";
 
 export class UserController {
-  static async getAllUsers(req: Request, res: Response) {
-    try {
-      const users: User[] = await userService.findAll();
-      res.json(users);
-    } catch (error) {
-      res.status(500).json({ message: "Ha ocurrido un error inesperado." });
-    }
-  }
+  static getAllUsers = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
+    const users: User[] = await userService.findAll();
+    
+    return ResponseHandler.success(
+      res,
+      users,
+      `Se encontraron ${users.length} usuarios`
+    );
+  });
 
-  static async getUserById(req: Request, res: Response) {
+  static getUserById = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
+    const id = Number(req.params.id);
+    
+    if (isNaN(id)) {
+      return ResponseHandler.badRequest(res, 'ID de usuario inválido');
+    }
+
     try {
-      const id = Number(req.params.id);
       const user = await userService.findById(id);
-      res.status(200).json(user);
+      return ResponseHandler.success(
+        res,
+        user,
+        `Usuario con ID ${id} encontrado`
+      );
     } catch (error: any) {
       if (error instanceof ApplicationError) {
-        return res.status(400).json({ message: error.message });
+        return ResponseHandler.notFound(res, 'Usuario');
       }
-      res.status(500).json({ message: "Ha ocurrido un error inesperado." });
+      throw error;
     }
-  }
+  });
 
-  static async createUser(req: Request, res: Response) {
+  static createUser = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
+    const { name, lastName, password } = req.body;
+
+    const validationErrors = Validator.validateFields([
+      () => Validator.required(name, 'name'),
+      () => Validator.string(name, 'name', 2),
+      () => Validator.required(lastName, 'lastName'),
+      () => Validator.string(lastName, 'lastName', 2),
+      () => Validator.required(password, 'password'),
+      () => Validator.string(password, 'password', 6)
+    ]);
+
+    if (validationErrors.length > 0) {
+      return ResponseHandler.validationError(res, validationErrors);
+    }
+
     try {
-      const { name, lastName, password } = req.body as UserRequest;
-      const newUser: User = await userService.create({ name, lastName, password });
-      res.status(201).json(newUser);
+      const userRequest: UserRequest = { name, lastName, password };
+      const newUser: User = await userService.create(userRequest);
+      
+      return ResponseHandler.success(
+        res,
+        newUser,
+        'Usuario creado exitosamente',
+        201
+      );
     } catch (error: any) {
       if (error instanceof ApplicationError) {
-        return res.status(400).json({ message: error.message });
+        return ResponseHandler.badRequest(res, error.message);
       }
-      res.status(500).json({ message: "Ha ocurrido un error inesperado." });
+      throw error;
     }
-  }
+  });
 
-  static async validateUser(req: Request, res: Response) {
+  static validateUser = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
+    const { name, password } = req.body;
+
+    const validationErrors = Validator.validateFields([
+      () => Validator.required(name, 'name'),
+      () => Validator.string(name, 'name'),
+      () => Validator.required(password, 'password'),
+      () => Validator.string(password, 'password')
+    ]);
+
+    if (validationErrors.length > 0) {
+      return ResponseHandler.validationError(res, validationErrors);
+    }
+
     try {
-      const { name, password } = req.body;
       const user = await userService.validateUser(name, password);
-      res.status(200).json(user);
+      return ResponseHandler.success(
+        res,
+        user,
+        'Usuario validado exitosamente'
+      );
     } catch (error: any) {
       if (error instanceof ApplicationError) {
-        return res.status(400).json({ message: error.message });
+        return ResponseHandler.unauthorized(res, 'Credenciales inválidas');
       }
-      res.status(500).json({ message: "Ha ocurrido un error inesperado." });
+      throw error;
     }
-  }
+  });
 
-  static async deleteUser(req: Request, res: Response) {
+  static deleteUser = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
+    const id = Number(req.params.id);
+    
+    if (isNaN(id)) {
+      return ResponseHandler.badRequest(res, 'ID de usuario inválido');
+    }
+
     try {
-      const id = Number(req.params.id);
       const deleted = await userService.deleteUserById(id);
       if (deleted) {
-        res.status(204).send();
+        return ResponseHandler.successNoData(
+          res,
+          `Usuario con ID ${id} eliminado exitosamente`,
+          204
+        );
       } else {
-        res.status(404).json({ message: "Usuario no encontrado." });
+        return ResponseHandler.notFound(res, 'Usuario');
       }
     } catch (error: any) {
       if (error instanceof ApplicationError) {
-        return res.status(400).json({ message: error.message });
+        return ResponseHandler.badRequest(res, error.message);
       }
-      res.status(500).json({ message: "Ha ocurrido un error inesperado." });
+      throw error;
     }
-  }
+  });
 
-  static async updateUser(req: Request, res: Response) {
+  static updateUser = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
+    const id = Number(req.params.id);
+    const { name, lastName, password } = req.body;
+
+    if (isNaN(id)) {
+      return ResponseHandler.badRequest(res, 'ID de usuario inválido');
+    }
+
+    const validationErrors = Validator.validateFields([
+      ...(name !== undefined ? [() => Validator.string(name, 'name', 2)] : []),
+      ...(lastName !== undefined ? [() => Validator.string(lastName, 'lastName', 2)] : []),
+      ...(password !== undefined ? [() => Validator.string(password, 'password', 6)] : [])
+    ]);
+
+    if (validationErrors.length > 0) {
+      return ResponseHandler.validationError(res, validationErrors);
+    }
+
     try {
-      const id = Number(req.params.id);
-      const userRequest = req.body as Partial<UserRequest>;
+      const userRequest: Partial<UserRequest> = { name, lastName, password };
       const updatedUser = await userService.updateUser(id, userRequest);
-      res.status(200).json(updatedUser);
+      
+      return ResponseHandler.success(
+        res,
+        updatedUser,
+        'Usuario actualizado exitosamente'
+      );
     } catch (error: any) {
       if (error instanceof ApplicationError) {
-        return res.status(400).json({ message: error.message });
+        return ResponseHandler.badRequest(res, error.message);
       }
-      res.status(500).json({ message: "Ha ocurrido un error inesperado." });
+      throw error;
     }
-  }
+  });
 }

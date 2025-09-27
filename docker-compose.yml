@@ -13,8 +13,9 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+      - ./db/db.sql:/docker-entrypoint-initdb.d/db.sql
       - db_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
 volumes:
   db_data:

@@ -12,12 +12,10 @@ export class OrderController {
     this.orderService = new OrderService(orderRepository, orderDetailRepository);
   }
 
-  // POST /orders - Realizar un pedido
   async createOrder(req: Request, res: Response): Promise<void> {
     try {
       const orderData = req.body;
       
-      // Validar datos requeridos
       if (!orderData.userId || !orderData.total || !orderData.orderDetails || orderData.orderDetails.length === 0) {
         res.status(400).json({
           success: false,
@@ -42,7 +40,6 @@ export class OrderController {
     }
   }
 
-  // GET /getOrderById/:id - Traer un pedido por Id
   async getOrderById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
@@ -79,7 +76,6 @@ export class OrderController {
     }
   }
 
-  // GET /getOrder - Traer todos los pedidos por usuario
   async getAllOrders(req: Request, res: Response): Promise<void> {
     try {
       const orders = await this.orderService.getAllOrders();
@@ -97,7 +93,6 @@ export class OrderController {
     }
   }
 
-  // GET /getDetailOrderById/:id - Traer el detalle de los pedidos
   async getOrderDetailById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
@@ -134,7 +129,6 @@ export class OrderController {
     }
   }
 
-  // DELETE /deleteOrder/:id - Eliminar un pedido
   async deleteOrder(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;

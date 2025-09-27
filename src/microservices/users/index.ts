@@ -1,4 +1,3 @@
-// Users Microservice Entry Point
 export { User } from './domain/user.model';
 export { UserController } from './infrastructure/user.controller';
 export { userService } from './application/user.service';
