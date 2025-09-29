@@ -38,6 +38,28 @@ class ProductService {
             throw new Error(`Error updating product: ${error}`);
         }
     }
+    async getProductById(id) {
+        try {
+            if (!id || id <= 0) {
+                throw new Error("Valid product ID is required");
+            }
+            return await this.productRepository.findById(id);
+        }
+        catch (error) {
+            throw new Error(`Error getting product by ID: ${error}`);
+        }
+    }
+    async deleteProduct(id) {
+        try {
+            if (!id || id <= 0) {
+                throw new Error("Valid product ID is required");
+            }
+            return await this.productRepository.delete(id);
+        }
+        catch (error) {
+            throw new Error(`Error deleting product: ${error}`);
+        }
+    }
 }
 exports.ProductService = ProductService;
 exports.default = ProductService;

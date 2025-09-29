@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.orderRouter = exports.OrderController = exports.OrderService = exports.OrderDetail = exports.Order = void 0;
-// Orders Microservice Entry Point
 var order_model_1 = require("./domain/model/order.model");
 Object.defineProperty(exports, "Order", { enumerable: true, get: function () { return order_model_1.Order; } });
 var order_detail_model_1 = require("./domain/model/order-detail.model");

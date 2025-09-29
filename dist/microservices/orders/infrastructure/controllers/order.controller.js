@@ -10,11 +10,9 @@ class OrderController {
         const orderDetailRepository = new order_detail_repository_1.OrderDetailRepository();
         this.orderService = new order_service_1.OrderService(orderRepository, orderDetailRepository);
     }
-    // POST /orders - Realizar un pedido
     async createOrder(req, res) {
         try {
             const orderData = req.body;
-            // Validar datos requeridos
             if (!orderData.userId || !orderData.total || !orderData.orderDetails || orderData.orderDetails.length === 0) {
                 res.status(400).json({
                     success: false,
@@ -37,7 +35,6 @@ class OrderController {
             });
         }
     }
-    // GET /getOrderById/:id - Traer un pedido por Id
     async getOrderById(req, res) {
         try {
             const { id } = req.params;
@@ -70,7 +67,6 @@ class OrderController {
             });
         }
     }
-    // GET /getOrder - Traer todos los pedidos por usuario
     async getAllOrders(req, res) {
         try {
             const orders = await this.orderService.getAllOrders();
@@ -87,7 +83,6 @@ class OrderController {
             });
         }
     }
-    // GET /getDetailOrderById/:id - Traer el detalle de los pedidos
     async getOrderDetailById(req, res) {
         try {
             const { id } = req.params;
@@ -120,7 +115,6 @@ class OrderController {
             });
         }
     }
-    // DELETE /deleteOrder/:id - Eliminar un pedido
     async deleteOrder(req, res) {
         try {
             const { id } = req.params;

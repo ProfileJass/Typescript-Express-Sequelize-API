@@ -8,13 +8,11 @@ class OrderService {
     }
     async createOrder(orderData) {
         try {
-            // Create the order first
             const order = await this.orderRepository.create({
                 userId: orderData.userId,
                 total: orderData.total,
                 orderDetails: orderData.orderDetails
             });
-            // Create order details
             const orderDetailsPromises = orderData.orderDetails.map(detail => this.orderDetailRepository.create({
                 orderId: order.id,
                 productId: detail.productId,

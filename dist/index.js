@@ -11,7 +11,7 @@ const startServer = async () => {
     try {
         await (0, database_1.connectDB)();
         app_1.default.listen(port, () => {
-            console.log(`🚀 Server is running on http://localhost:${port}`);
+            console.log(`🚀 Servidor corriendo en: http://localhost:${port}`);
         });
     }
     catch (error) {

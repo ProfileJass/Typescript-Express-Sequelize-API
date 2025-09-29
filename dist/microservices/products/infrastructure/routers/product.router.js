@@ -13,5 +13,7 @@ const productController = new product_controller_1.default(productService);
 router.post('/createProducts', productController.createProduct);
 router.put('/updateProducts/:id', productController.updateProduct);
 router.get('/getAllProducts', productController.getAllProducts);
+router.get('/getProduct/:id', productController.getProductById);
+router.delete('/deleteProduct/:id', productController.deleteProduct);
 exports.default = router;
 //# sourceMappingURL=product.router.js.map

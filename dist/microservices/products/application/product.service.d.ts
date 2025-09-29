@@ -11,5 +11,10 @@ export declare class ProductService {
     }[]>;
     createProduct(productRequest: ProductRequest): Promise<Product>;
     updateProduct(id: number, productRequest: Partial<ProductRequest>): Promise<Product | null>;
+    getProductById(id: number): Promise<{
+        product: Product;
+        category: Category;
+    } | null>;
+    deleteProduct(id: number): Promise<boolean>;
 }
 export default ProductService;
