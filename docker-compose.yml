@@ -1,4 +1,5 @@
-version: '3.8'
+version: "3.8"
+
 services:
   db:
     image: mysql:8.0
@@ -14,22 +15,77 @@ services:
     volumes:
       - ./db/db.sql:/docker-entrypoint-initdb.d/db.sql
       - db_data:/var/lib/mysql
-    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: --default-authentication-plugin=mysql_native_password
 
-  app:
-    build: .
-    container_name: tienda_app
+  users_app:
+    build: ./services/users
+    container_name: users_app
     restart: always
     environment:
       DB_HOST: db
       DB_USER: usuario
       DB_PASSWORD: usuario123
-      DB_NAME: SHOP
+      DB_NAME: tienda
+      PORT: 3001
     ports:
-      - "3101:3101"
+      - "3001:3001"
     depends_on:
       - db
+    volumes:
+      - ./services/users/src:/app/src
+
+products_app_1: # <-- Nuevo nombre de servicio
+  build: ./services/products
+  container_name: products_app_1 # <-- Nuevo nombre de contenedor
+  restart: always
+  environment:
+    DB_HOST: db
+    # ... (mismas variables de entorno)
+    PORT: 3002
+  # ¡YA NO EXPONEMOS EL PUERTO AL HOST!
+  # Nginx hablará con él por la red interna.
+  depends_on:
+    - db
+
+products_app_2: # <-- Segundo servicio
+  build: ./services/products
+  container_name: products_app_2 # <-- Nuevo nombre de contenedor
+  restart: always
+  environment:
+    DB_HOST: db
+    # ... (mismas variables de entorno)
+    PORT: 3002
+  depends_on:
+    - db
+
+orders_app:
+  build: ./services/orders
+  container_name: orders_app
+  restart: always
+  environment:
+    DB_HOST: db
+    DB_USER: usuario
+    DB_PASSWORD: usuario123
+    DB_NAME: tienda
+    PORT: 3003
+  ports:
+    - "3003:3003"
+  depends_on:
+    - db
+  volumes:
+    - ./services/orders/src:/app/src
+
+nginx_gateway:
+  build: ./nginx
+  container_name: nginx_gateway
+  restart: always
+  ports:
+    - "80:80"
+  depends_on:
+    - users_app
+    - products_app_1 # <-- Nginx ahora depende de las nuevas instancias
+    - products_app_2 # <--
+    - orders_app
 
 volumes:
   db_data:
-  app_data:
