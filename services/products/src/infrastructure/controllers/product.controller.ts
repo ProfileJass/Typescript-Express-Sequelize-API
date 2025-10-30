@@ -40,7 +40,7 @@ export class ProductController {
     });
 
     updateProduct = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
-        const id = parseInt(req.params.id);
+        const id = parseInt(req.params.id || '', 10);
         const { name, price, quantity, status } = req.body;
 
         if (isNaN(id)) {
@@ -83,7 +83,7 @@ export class ProductController {
     });
 
     getProductById = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
-        const id = parseInt(req.params.id);
+        const id = parseInt(req.params.id || '', 10);
         
         if (isNaN(id)) {
             return ResponseHandler.badRequest(res, 'ID de producto inválido');
@@ -103,7 +103,7 @@ export class ProductController {
     });
 
     deleteProduct = asyncHandler(async (req: Request, res: Response): Promise<Response> => {
-        const id = parseInt(req.params.id);
+        const id = parseInt(req.params.id || '', 10);
         
         if (isNaN(id)) {
             return ResponseHandler.badRequest(res, 'ID de producto inválido');

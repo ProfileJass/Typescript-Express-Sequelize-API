@@ -34,58 +34,46 @@ services:
     volumes:
       - ./services/users/src:/app/src
 
-products_app_1: # <-- Nuevo nombre de servicio
-  build: ./services/products
-  container_name: products_app_1 # <-- Nuevo nombre de contenedor
-  restart: always
-  environment:
-    DB_HOST: db
-    # ... (mismas variables de entorno)
-    PORT: 3002
-  # ¡YA NO EXPONEMOS EL PUERTO AL HOST!
-  # Nginx hablará con él por la red interna.
-  depends_on:
-    - db
+  products_app:
+    build: ./services/products
+    container_name: products_app_1
+    restart: always
+    environment:
+      DB_HOST: db
+      DB_USER: usuario        
+      DB_PASSWORD: usuario123  
+      DB_NAME: tienda        
+      PORT: 3002
+    depends_on:
+      - db
 
-products_app_2: # <-- Segundo servicio
-  build: ./services/products
-  container_name: products_app_2 # <-- Nuevo nombre de contenedor
-  restart: always
-  environment:
-    DB_HOST: db
-    # ... (mismas variables de entorno)
-    PORT: 3002
-  depends_on:
-    - db
-
-orders_app:
-  build: ./services/orders
-  container_name: orders_app
-  restart: always
-  environment:
-    DB_HOST: db
-    DB_USER: usuario
-    DB_PASSWORD: usuario123
-    DB_NAME: tienda
-    PORT: 3003
-  ports:
+  orders_app:
+    build: ./services/orders
+    container_name: orders_app
+    restart: always
+    environment:
+      DB_HOST: db
+      DB_USER: usuario
+      DB_PASSWORD: usuario123
+      DB_NAME: tienda
+      PORT: 3003
+    ports:
     - "3003:3003"
-  depends_on:
+    depends_on:
     - db
-  volumes:
+    volumes:
     - ./services/orders/src:/app/src
 
-nginx_gateway:
-  build: ./nginx
-  container_name: nginx_gateway
-  restart: always
-  ports:
-    - "80:80"
-  depends_on:
-    - users_app
-    - products_app_1 # <-- Nginx ahora depende de las nuevas instancias
-    - products_app_2 # <--
-    - orders_app
+  nginx_gateway:
+    build: ./nginx
+    container_name: nginx_gateway
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - users_app
+      - products_app
+      - orders_app
 
 volumes:
   db_data:

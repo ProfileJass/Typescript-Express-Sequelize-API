@@ -1,6 +1,5 @@
 import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { Order } from './order.model';
-import { Product } from '../../../products/domain/model/product.model';
 
 @Table({
   tableName: 'detalle_pedidos',
@@ -12,26 +11,23 @@ export class OrderDetail extends Model {
   @Column(DataType.INTEGER)
   id!: number;
 
-@Column({
-  type: DataType.INTEGER,
-  allowNull: false,
-  field: 'id_producto'
-})
-productId!: number;
+  @ForeignKey(() => Order)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    field: 'id_pedido' 
+  })
+  orderId!: number;
 
   @BelongsTo(() => Order)
   order!: Order;
 
-  @ForeignKey(() => Product)
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
-    field: 'id_producto'
+    field: 'id_producto' 
   })
   productId!: number;
-
-  @BelongsTo(() => Product)
-  product!: Product;
 
   @Column({
     type: DataType.INTEGER,

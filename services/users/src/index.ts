@@ -1,8 +1,9 @@
 import app from "./app";
 import { connectDB } from "./config/database";
 import process from "process";
+import "dotenv/config";
 
-const port = 8001;
+const port = process.env.PORT || 3001;
 
 const startServer = async () => {
   try {

@@ -1,5 +1,4 @@
-import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
-import { User } from '../../../users/domain/user.model';
+import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement, HasMany } from 'sequelize-typescript';
 import { OrderDetail } from './order-detail.model';
 
 @Table({
@@ -18,9 +17,6 @@ export class Order extends Model {
     field: 'id_usuario'
   })
   userId!: number;
-
-  @BelongsTo(() => User)
-  user!: User;
 
   @Column({
     type: DataType.DECIMAL(10, 2),

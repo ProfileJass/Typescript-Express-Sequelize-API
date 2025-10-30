@@ -2,21 +2,27 @@ import { Sequelize } from "sequelize-typescript";
 import { Product } from "../domain/model/product.model";
 import { Category } from "../domain/model/category.model";
 import { seedCategories } from "../seeders/category.seeder";
+import "dotenv/config";
 
-export const sequelize = new Sequelize("tienda", "usuario", "usuario123", {
-  host: "localhost",
-  port: 3306,
-  dialect: "mysql",
-  logging: console.log,
-  dialectOptions: {
-    charset: "utf8mb4",
-  },
-  define: {
-    charset: "utf8mb4",
-    collate: "utf8mb4_unicode_ci",
-    timestamps: true,
-  },
-});
+export const sequelize = new Sequelize(
+  process.env.DB_NAME || "tienda",
+  process.env.DB_USER || "usuario",
+  process.env.DB_PASSWORD || "usuario123",
+  {
+    host: process.env.DB_HOST || "localhost",
+    port: Number(process.env.DB_PORT) || 3306,
+    dialect: "mysql",
+    logging: console.log,
+    dialectOptions: {
+      charset: "utf8mb4",
+    },
+    define: {
+      charset: "utf8mb4",
+      collate: "utf8mb4_unicode_ci",
+      timestamps: true,
+    },
+  }
+);
 
 sequelize.addModels([Product, Category]);
 

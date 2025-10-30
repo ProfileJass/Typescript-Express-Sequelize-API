@@ -1,39 +1,37 @@
-import { Sequelize } from 'sequelize-typescript';
-import { User } from '../microservices/users/domain/user.model';
-import { Product } from '../microservices/products/domain/model/product.model';
-import { Category } from '../microservices/products/domain/model/category.model';
-import { Order } from '../microservices/orders/domain/model/order.model';
-import { OrderDetail } from '../microservices/orders/domain/model/order-detail.model';
-import { seedCategories } from '../seeders/category.seeder';
+import { Sequelize } from "sequelize-typescript";
+import { User } from "../domain/user.model";
 
-export const sequelize = new Sequelize('tienda', 'usuario', 'usuario123', {
-  host: 'localhost',
-  port: 3306,
-  dialect: 'mysql',
-  logging: console.log,
-  dialectOptions: {
-    charset: 'utf8mb4',
-  },
-  define: {
-    charset: 'utf8mb4',
-    collate: 'utf8mb4_unicode_ci',
-    timestamps: true,
-  },
-});
+export const sequelize = new Sequelize(
+  process.env.DB_NAME || "tienda",
+  process.env.DB_USER || "usuario",
+  process.env.DB_PASSWORD || "usuario123",
+  {
+    host: process.env.DB_HOST || "localhost",
+    port: Number(process.env.DB_PORT) || 3306,
+    dialect: "mysql",
+    logging: console.log,
+    dialectOptions: {
+      charset: "utf8mb4",
+    },
+    define: {
+      charset: "utf8mb4",
+      collate: "utf8mb4_unicode_ci",
+      timestamps: true,
+    },
+  }
+);
 
-sequelize.addModels([User, Product, Category, Order, OrderDetail]);
+sequelize.addModels([User]);
 
 export const connectDB = async (): Promise<void> => {
   try {
     await sequelize.authenticate();
-    console.log('✅ Conexión a MySQL establecida correctamente.');
+    console.log("✅ Conexión a MySQL establecida correctamente.");
 
     await sequelize.sync({ force: false });
-    console.log('✅ Modelos sincronizados con la base de datos.');
-
-    await seedCategories();
+    console.log("✅ Modelos sincronizados con la base de datos.");
   } catch (error) {
-    console.error('❌ Error al conectar con la base de datos:', error);
+    console.error("❌ Error al conectar con la base de datos:", error);
     throw error;
   }
 };
