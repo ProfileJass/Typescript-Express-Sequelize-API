@@ -1,0 +1,25 @@
+servicios/users, servicios/products, etc.)
+node_modules/
+package-lock.json
+
+dist/
+
+*.log
+npm-debug.log*
+yarn-error.log
+yarn-debug.log*
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+.vscode/
+
+.idea/
+
+*.swp
+*~

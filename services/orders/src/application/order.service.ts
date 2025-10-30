@@ -1,6 +1,10 @@
 import { OrderRepositoryInterface } from "../domain/ports/order.repository.interface";
 import { OrderDetailRepositoryInterface } from "../domain/ports/order-detail.repository.interface";
-import { CreateOrderRequest, OrderResponse } from "./dto/order.request";
+import {
+  CreateOrderRequest,
+  OrderResponse,
+  OrderDetailResponse,
+} from "./dto/order.request";
 
 export class OrderService {
   constructor(
@@ -132,7 +136,7 @@ export class OrderService {
     }
   }
 
-  async getOrderDetailById(id: number): Promise<any> {
+  async getOrderDetailById(id: number): Promise<OrderDetailResponse | null> {
     try {
       const orderDetail = await this.orderDetailRepository.findById(id);
       if (!orderDetail) return null;
