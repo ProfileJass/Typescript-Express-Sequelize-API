@@ -6,7 +6,7 @@ import { errorHandler, notFoundHandler } from './shared/middleware/error-handler
 const app = express();
 app.use(express.json());
 
-app.use('/users', userRouter);
+app.use('/', userRouter);
 
 app.use(notFoundHandler);
 

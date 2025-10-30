@@ -54,7 +54,6 @@ export class OrderController {
       const orderId = parseInt(id || "");
 
       if (isNaN(orderId)) {
-
         res.status(400).json({
           success: false,
           message: "Invalid order ID",
@@ -97,6 +96,42 @@ export class OrderController {
       res.status(500).json({
         success: false,
         message: "Error getting orders",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  }
+
+  async getOrdersByUserId(req: Request, res: Response): Promise<void> {
+    try {
+      const { userId } = req.params;
+      const id = parseInt(userId || "");
+
+      if (isNaN(id)) {
+        res.status(400).json({
+          success: false,
+          message: "Invalid user ID",
+        });
+        return;
+      }
+
+      const orders = await this.orderService.getOrdersByUserId(id);
+
+      if (!orders || orders.length === 0) {
+        res.status(404).json({
+          success: false,
+          message: "No orders found for this user",
+        });
+        return;
+      }
+
+      res.status(200).json({
+        success: true,
+        data: orders,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Error getting orders by user",
         error: error instanceof Error ? error.message : "Unknown error",
       });
     }

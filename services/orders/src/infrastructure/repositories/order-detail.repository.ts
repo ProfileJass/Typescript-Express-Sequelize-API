@@ -20,7 +20,7 @@ export class OrderDetailRepository implements OrderDetailRepositoryInterface {
   async findById(id: number): Promise<OrderDetail | null> {
     try {
       const orderDetail = await OrderDetail.findByPk(id, {
-        include: ['order', 'product']
+        include: ['order']
       });
       return orderDetail;
     } catch (error) {
@@ -32,7 +32,6 @@ export class OrderDetailRepository implements OrderDetailRepositoryInterface {
     try {
       const orderDetails = await OrderDetail.findAll({
         where: { orderId },
-        include: ['product'],
         order: [['createdAt', 'ASC']]
       });
       return orderDetails;

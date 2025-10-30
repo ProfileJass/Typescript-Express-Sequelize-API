@@ -1,5 +1,5 @@
-import { Order } from '../model/order.model';
-import { CreateOrderRequest } from '../../application/dto/order.request';
+import { Order } from "../model/order.model";
+import { CreateOrderRequest } from "../../application/dto/order.request";
 
 export interface OrderRepositoryInterface {
   create(orderData: CreateOrderRequest): Promise<Order>;

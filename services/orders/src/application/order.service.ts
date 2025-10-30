@@ -1,6 +1,6 @@
 import { OrderRepositoryInterface } from "../domain/ports/order.repository.interface";
-import { OrderDetailRepositoryInterface } from '../domain/ports/order-detail.repository.interface';
-import { CreateOrderRequest, OrderResponse } from './dto/order.request';
+import { OrderDetailRepositoryInterface } from "../domain/ports/order-detail.repository.interface";
+import { CreateOrderRequest, OrderResponse } from "./dto/order.request";
 
 export class OrderService {
   constructor(
@@ -13,15 +13,15 @@ export class OrderService {
       const order = await this.orderRepository.create({
         userId: orderData.userId,
         total: orderData.total,
-        orderDetails: orderData.orderDetails
+        orderDetails: orderData.orderDetails,
       });
 
-      const orderDetailsPromises = orderData.orderDetails.map(detail => 
+      const orderDetailsPromises = orderData.orderDetails.map((detail) =>
         this.orderDetailRepository.create({
           orderId: order.id,
           productId: detail.productId,
           quantity: detail.quantity,
-          price: detail.price
+          price: detail.price,
         })
       );
 
@@ -32,13 +32,13 @@ export class OrderService {
         userId: order.userId,
         total: order.total,
         fecha: order.fecha,
-        orderDetails: orderDetails.map(detail => ({
+        orderDetails: orderDetails.map((detail) => ({
           id: detail.id,
           orderId: detail.orderId,
           productId: detail.productId,
           quantity: detail.quantity,
-          price: detail.price
-        }))
+          price: detail.price,
+        })),
       };
     } catch (error) {
       throw new Error(`Error creating order: ${error}`);
@@ -57,13 +57,13 @@ export class OrderService {
         userId: order.userId,
         total: order.total,
         fecha: order.fecha,
-        orderDetails: orderDetails.map(detail => ({
+        orderDetails: orderDetails.map((detail) => ({
           id: detail.id,
           orderId: detail.orderId,
           productId: detail.productId,
           quantity: detail.quantity,
-          price: detail.price
-        }))
+          price: detail.price,
+        })),
       };
     } catch (error) {
       throw new Error(`Error getting order by ID: ${error}`);
@@ -73,22 +73,24 @@ export class OrderService {
   async getAllOrders(): Promise<OrderResponse[]> {
     try {
       const orders = await this.orderRepository.findAll();
-      
+
       const ordersWithDetails = await Promise.all(
         orders.map(async (order) => {
-          const orderDetails = await this.orderDetailRepository.findByOrderId(order.id);
+          const orderDetails = await this.orderDetailRepository.findByOrderId(
+            order.id
+          );
           return {
             id: order.id,
             userId: order.userId,
             total: order.total,
             fecha: order.fecha,
-            orderDetails: orderDetails.map(detail => ({
+            orderDetails: orderDetails.map((detail) => ({
               id: detail.id,
               orderId: detail.orderId,
               productId: detail.productId,
               quantity: detail.quantity,
-              price: detail.price
-            }))
+              price: detail.price,
+            })),
           };
         })
       );
@@ -96,6 +98,37 @@ export class OrderService {
       return ordersWithDetails;
     } catch (error) {
       throw new Error(`Error getting all orders: ${error}`);
+    }
+  }
+
+  async getOrdersByUserId(userId: number): Promise<OrderResponse[]> {
+    try {
+      const orders = await this.orderRepository.findByUserId(userId);
+
+      const ordersWithDetails = await Promise.all(
+        orders.map(async (order) => {
+          const orderDetails = await this.orderDetailRepository.findByOrderId(
+            order.id
+          );
+          return {
+            id: order.id,
+            userId: order.userId,
+            total: order.total,
+            fecha: order.fecha,
+            orderDetails: orderDetails.map((detail) => ({
+              id: detail.id,
+              orderId: detail.orderId,
+              productId: detail.productId,
+              quantity: detail.quantity,
+              price: detail.price,
+            })),
+          };
+        })
+      );
+
+      return ordersWithDetails;
+    } catch (error) {
+      throw new Error(`Error getting orders by user ID: ${error}`);
     }
   }
 
@@ -109,7 +142,7 @@ export class OrderService {
         orderId: orderDetail.orderId,
         productId: orderDetail.productId,
         quantity: orderDetail.quantity,
-        price: orderDetail.price
+        price: orderDetail.price,
       };
     } catch (error) {
       throw new Error(`Error getting order detail by ID: ${error}`);

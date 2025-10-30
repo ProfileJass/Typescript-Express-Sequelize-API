@@ -1,0 +1,100 @@
+# COMO PROBAR TODOS LOS ENDPOINTS
+
+Servidor: http://localhost:80
+
+## USUARIOS
+
+Obtener todos los usuarios
+GET /api/users/getAll/
+
+Obtener usuario por ID
+GET /api/users/getById/1
+
+Crear usuario
+POST /api/users/createUser/
+{
+  "name": "Pedro",
+  "lastName": "García",
+  "password": "mypassword123" 
+}
+
+Validar usuario
+POST /api/users/validateUser/
+{
+  "name": "Juan",
+  "password": "123456"
+}
+
+Eliminar usuario
+DELETE /api/users/deleteUser/4
+
+## PRODUCTOS
+
+Obtener todos los productos
+GET /api/products/getAllProducts
+
+Obtener producto por ID
+GET /api/products/getProduct/1
+
+Crear producto
+POST /api/products/createProducts
+{
+  "name": "Samsung Galaxy S23",
+  "price": 899.99,
+  "quantity": 15,
+  "status": "active",
+  "categoryId": 1
+}
+
+Actualizar producto
+PUT /api/products/updateProducts/1
+{
+  "name": "Laptop HP Pavilion",
+  "price": 1199.99,
+  "quantity": 12,
+  "status": "active"
+}
+
+Eliminar producto
+DELETE /api/products/deleteProduct/8
+
+## PEDIDOS
+
+Crear pedido
+POST /api/orders/
+{
+  "userId": 1,
+  "total": 1329.98,
+  "orderDetails": [
+    {
+      "productId": 1,
+      "quantity": 1,
+      "price": 999.99
+    },
+    {
+      "productId": 2,
+      "quantity": 1,
+      "price": 329.99
+    }
+  ]
+}
+
+Obtener todos los pedidos
+GET /api/orders/getOrder
+
+Obtener pedido por ID
+GET /api/orders/getOrderById/1
+
+Trae todos los pedidos de un usuario específico.
+GET /api/getOrdersByUserId/1
+
+Obtener detalle de pedido
+GET /api/orders/getDetailOrderById/1
+
+Eliminar pedido
+DELETE /api/orders/deleteOrder/1
+
+# INTEGRANTES
+- Karen Dayana Ruiz Forero
+- Wilson Javier Soledad Martínez
+- Jhonatan Andres Sierra Sosa
